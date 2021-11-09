@@ -1,0 +1,99 @@
+{%extends 'restaurant/base.html'%}
+{%load static%}
+{%block title%}{{user.get_full_name}} {{request.user.get_full_name}}{%endblock%}
+{%block extra_style%}
+    <style> 
+       .error{color:red}
+    </style>
+{%endblock%}
+{%block content%}
+    <div class="container">
+        <br>
+        <h3>{{user.email}}</h3><br>
+        <div class=" table-responsive">
+            <table class="table table-striped">
+                <tbody>
+                <tr>
+                    <th>Fullname</th>
+                    <td>{{user.get_full_name}}</td>
+                </tr>
+               
+                <tr>
+                    <th>Email</th>
+                    <td>{{user.email}}</td>
+                </tr>
+                <tr>
+                    <th>Created Date</th>
+                    <td>{{user.date_joined}}</td>
+                </tr>
+                {%if not request.user.is_subadmin %}
+                <tr>
+                    <th>Subadmin</th>
+                    <td>
+                        {%if user.is_subadmin %}
+                        Yes
+                        {%else%} 
+                        No
+                        {%endif%}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Created By</th>
+                    <td>
+                        {%if user.created_by == request.user.email  %}
+                        Me
+                        {%else%} 
+                        {{user.created_by}}
+                        {%endif%}
+                    </td>
+                </tr>
+                {%endif%}
+                <tr>
+                    <th><a href="{% url 'restaurant:delete-user' id=user.id %}">Delete</a></th>
+                </tr>
+                
+                </tbody>
+              </table>
+        </div>
+        <br> <h5>Addresses</h5>
+        <table class="table"> 
+            {%if user.address.all%}
+            <tbody>
+                <tr>
+                    <th>Sr No.</th>
+                    <th>Address</th>
+                </tr>
+                    {%for address in user.address.all %}
+                    <tr>
+                        <td>{{forloop.counter}}</td>
+                        <td><address>{{address.address}}</address></td>
+                    </tr>
+                    {%endfor%}
+            </tbody>
+            {%else%}
+                <p>User has no Address</p>
+            {%endif%}
+        </table>
+        {%if user.is_subadmin %}
+        <div class="row">
+            <h4>Restaurant of Subadmin</h4>
+            {%if user.restaurant_set.all %}
+            {%for r in user.restaurant_set.all%}
+            <div class="col-md-4">
+                <div class="card">
+                    <img class="card-img-top" src="{{r.image.url}}" alt="Card image" width="auto" height="200px">
+                    <div class="card-body">
+                      <h4 class="card-title">{{r.name.upper}}</h4>
+                      <p class="card-text">{{r.address | truncatechars:30}}</p>
+                      <a href="{% url 'restaurant:menu' resID=r.id %}" style="text-decoration: none;color: white;"><button class="btn btn-success">View Menu</button></a><br>
+                    </div>
+                  </div>
+            </div>
+            {%endfor%}
+            {%else%}
+                <h6>No Restaurant added.</h6>
+            {%endif%}
+        </div>
+        {%endif%}
+    </div>
+{%endblock%}

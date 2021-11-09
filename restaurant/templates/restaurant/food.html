@@ -1,0 +1,121 @@
+{%extends 'restaurant/base.html'%}
+{%load static%}
+{%block title%}Add Restaurant{%endblock%}
+{%block extra_style%}
+    <style> 
+        input{width:100%;padding: 8px;border: none;}
+        label{font-weight: bold;}
+        .error{font-weight: bold;}
+        input:focus{border: none;}
+        .submitBtn{background-color: #e3d105; border: 1px solid white; height: 50px;width:100px;padding: 10px;}
+    </style>
+{%endblock%}
+{%block content%}
+    <div class="container">
+        <br><br>
+        <div class="row">
+            <h4><a href="{%url 'restaurant:dashboard'%}" style="text-decoration: none;">Home</a>/Restaurant/ {{restaurant.name}}</h4><br>
+            <div class="col-md-3 mb-3 shadow ">
+                <div class="card" style="margin-top: 20px;">
+                    <img class="card-img-top" src="{{restaurant.image.url}}" alt="Card image" width="100%" height="200px">
+                    <div class="card-body">
+                        <h4 class="card-title">{{restaurant.name}}</h4>
+                        <p class="card-text">{{restaurant.address}} Pincode -{{restaurant.pincode}}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-9 mb-3 shadow ">
+                <h4 style="padding-top: 10px;">All Menu</h4>
+                {%if request.user.is_staff or request.user.is_subadmin%}
+                    {%if request.user == restaurant.created_by %}
+                    {%if not current_food %}
+                    <button  class="btn btn-primary" onclick="addFood()"  id="button-addon2"><i class="fas fa-plus"></i> Add Food</button>
+                    {%endif%}
+                    <br> <br>
+                    {%if current_food %}
+                    <!--update Food-->
+                    <form action="" method="post" enctype="multipart/form-data">
+                        {%csrf_token%}
+                        <h5>Update Food {{current_food}}</h5>
+                        {% for field in form%}
+                        <div class="mb-3">
+                        <span class="error">{{field.errors}}</span>
+                        <label for="">{{field.label_tag}}</label>
+                        <div class="form-control form-control-lg">{{field}}</div>
+                        </div>
+                        {%endfor%} <br>
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </form>
+                    {%endif%}
+                    <!--Add Food-->
+                    <form method="post" enctype="multipart/form-data">
+                        {%csrf_token%}
+                        <div class="row" id="food"> </div>
+                        <input type="hidden" value="{{restaurant.id}}" name="id">
+                        <button class="btn btn-info text-white" type="submit" id="AddFoodBtn">Add</button>
+                    </form>
+                    {%endif%}
+                {%endif%}
+                <hr>
+                <div class="row">
+                    {%if menu%}
+                    {%for food in menu%}
+                    <div class="col-md-4 mb-2">
+                        <div class="card shadow">
+                            <img class="card-img-top img-circle" src="{{food.image.url}}" alt="Card image" width="auto" height=""><hr>
+                            <div class="card-body">
+                                <h4 class="card-title">{{forloop.counter}}. {{food.name}}</h4>
+                                <p><b>Price- &#x20B9; {{food.price}}</b></p>
+                                <p class="card-text">{{food.description | truncatechars:30}}</p>
+                                {%if not request.user.is_staff %}
+                                    <button class="btn btn-primary">Add to Cart</button>
+                                {%endif%}
+                                {%if request.user.is_staff or request.user.is_subadmin %}
+                                    {%if request.user == restaurant.created_by %}
+                                    <a href="{% url 'restaurant:update-food' id=food.id%}"><button class="btn btn-info"><i class="fas fa-edit"></i></button></a>
+                                    <a href="{% url 'restaurant:delete-food' id=food.id%}"><button class="btn btn-danger"><i class="fas fa-trash"></i></button></a>
+                                    {%endif%}
+                                {%endif%}
+                            </div>
+                        </div>
+                    </div>
+                    {%endfor%}
+                    {%else%}
+                        <h2>Sorry,No Food</h2>
+                    {%endif%}
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        var current_food=0
+        var i=0
+
+        function hideAddFoodBtn() {  
+            if(i > 0){
+                $("#AddFoodBtn").show();
+            }else{
+                $("#AddFoodBtn").hide();
+            }
+        }
+        hideAddFoodBtn()
+        function addFood(){
+            var element=document.getElementById('food')
+            
+            var html= ' <div class="input-group mb-3" id="current_food_'+current_food+'"><input type="text" class="form-control" name="foodName" required placeholder="Name" aria-describedby="button-addon2"><input type="text" required style="width:50px" class="form-control" name="price" placeholder="Price"><br><textarea row="2" required placeholder="Description" name="desc"></textarea><input type="file" name=image required><button class="btn btn-danger" onclick="removeFood('+current_food+')" type="button">Remove Food</button></div> '
+            element.innerHTML +=html
+            current_food ++
+            i++
+            hideAddFoodBtn()
+        }
+        function removeFood(id){
+            var ele=document.getElementById('current_food_'+id+'')
+            ele.remove()
+            i--
+            hideAddFoodBtn()
+        }
+
+    </script>
+{%endblock%}

@@ -1,0 +1,82 @@
+{%extends 'restaurant/base.html'%}
+{%load static%}
+{%block title%}Welcome {{request.user.get_full_name}}{%endblock%}
+{%block extra_style%}
+    <style> 
+       .error{color:red}
+    </style>
+{%endblock%}
+{%block content%}
+
+<div class="container-fluid box">
+    <div class="row" style="min-height: 500px;margin-top:20px">
+        <div class="col-md-3 shadow" style="border-right: 1px solid grey;padding: 20px;">
+            <h4><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal"><i class="fas fa-plus"></i></button> Add Address</h4>
+            <h5>Your Addresses</h5> <hr>
+            {%if not addresses%}
+            <h5>You have no address.</h5>
+            {%endif%}
+            {% for address in addresses%}
+            <div class="card">
+                <div class="card-body">
+                    {{forloop.counter}}. {{address.address}} Pincode- {{address.pincode}} <br>
+                    
+                    <a href="{% url 'restaurant:delete-address' id=address.id %}"><button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></a>
+                </div>
+            </div>
+            {%endfor%}
+        </div>
+        <div class="col-md-9" style="padding: 20px;">
+            <h2>Some Popular Restaurants</h2><hr>
+            <div class="row">
+            {%for r in restaurant%}
+            <div class="col-md-4">
+                <div class="card">
+                    <img class="card-img-top" src="{{r.image.url}}" alt="Card image" width="100%" height="250px">
+                    <div class="card-body">
+                      <h4 class="card-title">{{r.name}}</h4>
+                      <p class="card-text">{{r.address | truncatechars:30}}</p>
+                      <button class="btn btn-success"><a href="{% url 'restaurant:menu' resID=r.id %}" style="text-decoration: none;color: white;">View Menu</a></button>
+                    </div>
+                </div>
+            </div>
+            {%endfor%}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Model Box-->
+  <!-- The Modal -->
+<div class="modal fade" id="myModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Add Your Address</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body"> 
+                <form method="post">
+                    {%csrf_token%}
+                    {% for field in form%}
+                    <div class="mb-3">
+                      <span class="error">{{field.errors}}</span>
+                      <label for="">{{field.label_tag}}</label>
+                      <div class="form-control form-control-lg">{{field}}</div>
+                    </div>
+                    {%endfor%}
+                    <input type="submit" class="btn btn-primary" value="Add">
+                </form>
+            </div>
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{%endblock%}
+       

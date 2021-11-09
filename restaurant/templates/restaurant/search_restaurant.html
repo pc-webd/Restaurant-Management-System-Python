@@ -1,0 +1,40 @@
+{%extends 'restaurant/base.html'%}
+{%load static%}
+{%block title%}Search Restaurant{%endblock%}
+{%block extra_style%}
+    <style> 
+       
+    </style>
+{%endblock%}
+{%block content%}
+    <div class="container">
+        <h3 class="mt-3 text-center ">Searched Restaurant</h3><hr>    
+        <div class="row">
+            {%if restaurant%}
+            {%for r in restaurant%}
+            <div class="col-md-4">
+                <div class="card shadow-lg">
+                    <img class="card-img-top" src="{{r.image.url}}" alt="Card image" width="100%" height="200px">
+                    <div class="card-body">
+                      <h4 class="card-title">{{r.name}}</h4>
+                      <p class="card-text">{{r.address}}</p>
+                      <button class="btn btn-success"><a href="{% url 'restaurant:menu' resID=r.id %}" style="text-decoration: none;color: white;">View Menu</a></button> <br><br>
+                      {%if r.distance%}
+                      {%if r.distance > 0 %}
+                      <button class="btn btn-primary"> Distance-{{r.distance}}Km</button>
+                     
+                      {%else%}
+                      <button class="btn btn-primary"> Distance-0Km</button>
+                      {%endif%}
+                      {%endif%}
+                    </div>
+                </div>
+            </div>
+            {%endfor%}
+            {%else%}
+                <p>No Data Found.</p>
+            {%endif%}
+            
+        </div>
+    </div>
+{%endblock%}
