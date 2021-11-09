@@ -37,7 +37,11 @@
     {%endfor%}
     <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
         <div class="container-fluid">
+            {% if request.user.is_authenticated %}
             <a class="navbar-brand" href="/dashboard/"><img src="{%static 'images/logo.png'%}" alt=""></a>
+            {%else%}
+            <a class="navbar-brand" href="/"><img src="{%static 'images/logo.png'%}" alt=""></a>
+            {%endif%}
             
             <ul class="list-group list-group-horizontal">
                 
