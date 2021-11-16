@@ -117,11 +117,11 @@ USE_L10N = True
 USE_TZ = True
 
 
-EMAIL_USE_TLS = True
+"""EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'chromapcweb@gmail.com'
 EMAIL_HOST_PASSWORD = 'Pc^311514'
-EMAIL_PORT = 587
+EMAIL_PORT = 587"""
 
 
 # Static files (CSS, JavaScript, Images)

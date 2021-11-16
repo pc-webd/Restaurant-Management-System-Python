@@ -29,7 +29,7 @@ def registerUser(request):
             password=form.cleaned_data['password']
             user.set_password(password)
             user.save()
-            send_mail_after_registration(email)
+            #send_mail_after_registration(email)
             user=authenticate(email=email,password=password)
             if user is not None:
                 if user.is_active:
@@ -41,12 +41,12 @@ def registerUser(request):
         else:
             return render(request,'restaurant/register.html',{'form':form})
     
-def send_mail_after_registration(email):
+"""def send_mail_after_registration(email):
     subject="Your Account has been created successfully"
     message=f'Thank you for sign up.'
     email_from=settings.EMAIL_HOST_USER
     receipent_list=[email]
-    send_mail(subject,message,email_from,receipent_list)
+    send_mail(subject,message,email_from,receipent_list)"""
 
 def loginUser(request):
     if request.method=='GET':
